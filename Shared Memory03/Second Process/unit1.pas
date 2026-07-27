@@ -47,6 +47,47 @@ var
 begin
 
   SetLastError(0);
+  if hMapFile = 0 then
+  begin
+    hMapFile := OpenFileMapping(
+      FILE_MAP_ALL_ACCESS,    // read/write access
+      FALSE,                 // do not inherit the name
+      szName               // name of mapping object
+    );
+
+    if hMapFile = 0 then
+    begin
+      _tprintf('Could not open file mapping object Error: '+ SysErrorMessage(GetLastError));
+      Exit;
+    end;
+    if hMapFile <> 0 then
+    begin
+      memo1.Clear;
+      pBuf := PChar(MapViewOfFile(
+        hMapFile,            // Handle to map object
+        FILE_MAP_ALL_ACCESS, // Read/write permission
+        0,
+        0,
+        MEMORY_SIZE
+      ));
+
+      if pBuf = nil then
+      begin
+        _tprintf('Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
+        CloseHandle(hMapFile);
+        Exit;
+      end;
+
+      if pBuf <> nil then
+      begin
+        myString := String(pBuf);
+        _tprintf('Message: '+myString);
+
+        //_tprintf('Sender PID: '+ pBuf^.ProcessID);
+        //_tprintf('Message: '+ pBuf^.Message);
+      end;
+    end;
+  end;
 
   if pBuf <> nil then
   begin
