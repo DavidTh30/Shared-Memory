@@ -1,0 +1,50 @@
+object Form1: TForm1
+  Left = 412
+  Height = 448
+  Top = 145
+  Width = 403
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Stream Client'
+  ClientHeight = 448
+  ClientWidth = 403
+  Position = poWorkAreaCenter
+  LCLVersion = '4.4.0.0'
+  OnClose = FormClose
+  object Memo1: TMemo
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 136
+    Height = 448
+    Top = 0
+    Width = 267
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+    WordWrap = False
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 8
+    Width = 43
+    Caption = 'Receive:'
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 15
+    Top = 27
+    Width = 19
+    Caption = 'ID='
+  end
+  object Label3: TLabel
+    Left = 8
+    Height = 15
+    Top = 47
+    Width = 40
+    Caption = 'Name='
+  end
+end
