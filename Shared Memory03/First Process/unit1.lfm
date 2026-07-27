@@ -1,0 +1,34 @@
+object Form1: TForm1
+  Left = 497
+  Height = 328
+  Top = 137
+  Width = 719
+  Caption = 'First Process'
+  ClientHeight = 328
+  ClientWidth = 719
+  OnClose = FormClose
+  Position = poWorkAreaCenter
+  LCLVersion = '3.4.0.0'
+  object Memo1: TMemo
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 272
+    Height = 328
+    Top = 0
+    Width = 447
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+    WordWrap = False
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 24
+    Width = 34
+    Caption = 'String:'
+  end
+end
