@@ -1,0 +1,45 @@
+object Form1: TForm1
+  Left = 521
+  Height = 302
+  Top = 163
+  Width = 704
+  Caption = 'SampleClient'
+  ClientHeight = 302
+  ClientWidth = 704
+  OnClose = FormClose
+  Position = poWorkAreaCenter
+  LCLVersion = '3.4.0.0'
+  object Memo1: TMemo
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 264
+    Height = 302
+    Top = 0
+    Width = 440
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+    WordWrap = False
+  end
+  object Button1: TButton
+    Left = 58
+    Height = 36
+    Top = 75
+    Width = 128
+    Caption = 'Send'
+    TabOrder = 1
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 58
+    Height = 36
+    Top = 120
+    Width = 128
+    Caption = 'Clear'
+    TabOrder = 2
+    OnClick = Button2Click
+  end
+end
