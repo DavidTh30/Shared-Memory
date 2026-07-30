@@ -29,6 +29,11 @@ var
   Memo_: TMemo;
   hMapFile: THandle;
   pBuf: PChar;
+  MutexHandle: THandle;
+{$IFDEF Windows}
+var
+  StartUp: StartUpInfoA;
+{$ENDIF}
 
 implementation
 
