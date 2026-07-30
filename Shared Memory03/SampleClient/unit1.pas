@@ -50,6 +50,7 @@ procedure TForm1.OnIdle(Sender: TObject; var Done: boolean);
 begin
 
   if FileMappingActive(CMapName) then  Shape1.Brush.Color:=clGreen else Shape1.Brush.Color:=clWhite;
+
   Done := false;
 end;
 
@@ -60,6 +61,8 @@ end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  if MutexHandle <> 0 then begin CloseHandle(MutexHandle); MutexHandle:=0; end;
+
   if pBuf <> nil then
   begin
     UnmapViewOfFile(pBuf);
@@ -71,6 +74,7 @@ begin
     hMapFile := 0;
   end;
 
+  CloseHandle(MutexHandle);
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -90,34 +94,28 @@ inherited Create(TheOwner);
   Application.OnIdle := @OnIdle;
   Application.OnIdleEnd:=@OnIdleEnd;
 
-  //SetLastError(0);
-  //
-  //hMapFile := OpenFileMapping(
-  //  FILE_MAP_ALL_ACCESS,    // read/write access
-  //  FALSE,                 // do not inherit the name
-  //  CMapName               // name of mapping object
-  //);
-  //
-  //if hMapFile = 0 then
-  //begin
-  //  _tprintf({$I %LINE%}+ ': Could not open file mapping object Error: '+ SysErrorMessage(GetLastError));
-  //  Exit;
-  //end;
-  //
-  //pBuf := PChar(MapViewOfFile(
-  //  hMapFile,            // Handle to map object
-  //  FILE_MAP_ALL_ACCESS, // Read/write permission
-  //  0,
-  //  0,
-  //  MEMORY_SIZE
-  //));
-  //
-  //if pBuf = nil then
-  //begin
-  //  _tprintf({$I %LINE%}+ ': Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
-  //  CloseHandle(hMapFile);
-  //  Exit;
-  //end;
+  Application.Name:='SampleClient';
+  MutexHandle := CreateMutex(nil, True, PAnsiChar(Application.Name));  //CompanyName.ProductName.AppName
+   if (MutexHandle = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
+  begin
+    if MutexHandle <> 0 then begin CloseHandle(MutexHandle); MutexHandle:=0; end;
+    Halt;
+  end;
+
+  {$IFDEF Windows}
+    GetStartupInfo(StartUp);
+    //_tprintf('Startup.dwFlags: '+Startup.dwFlags.ToString);
+    //if (Startup.dwFlags = $401) then _tprintf('Strart up using GUI app Explorer');
+    //if (Startup.dwFlags = $000) then _tprintf('Strart up using GUI app CMD');
+    //if (Startup.dwFlags = $C01) then _tprintf('Strart up using GUI app Shortcut');
+    //if (Startup.dwFlags = $001) then _tprintf('Strart up using Console app Explorer');
+    //if (Startup.dwFlags = $801)then _tprintf('Strart up using Console app Shortcut');
+  //            GUI app	             GUI app	        GUI app	               Console app          Console app	          Console app
+  //Variable	Explorer	     CMD	        Shortcut	       Explorer	            CMD	                  Shortcut
+  //dwFlags	0x00000401	     0x00000000	        0x00000C01	       0x00000001 	    0x00000000	          0x00000801
+  //wShowWindow	0x0001	             0x0001	        0x0001	               0x0001	            0x0001	          0x0001
+  //hStdOutput	0x0000000000010001   0xFFFFFFFFFFFFFFFF	0x0000000000010001     0xFFFFFFFFFFFFFFFF   0xFFFFFFFFFFFFFFFF	  0xFFFFFFFFFFFFFFFF
+  {$ENDIF}
 
 
 end;
