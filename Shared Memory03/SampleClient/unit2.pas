@@ -10,6 +10,7 @@ uses
 
 procedure _tprintf(s:string);
 procedure _tprintf2(s:string);
+Function FileMappingActive(MapName: string): boolean;
 function RandomString(Size: Integer): String;
 
 type
@@ -39,6 +40,18 @@ end;
 
 procedure _tprintf2(s:string);
 begin
+
+  if pBuf <> nil then
+  begin
+    UnmapViewOfFile(pBuf);
+    pBuf:=nil;
+  end;
+  if hMapFile <> 0 then
+  begin
+    CloseHandle(hMapFile);
+    hMapFile := 0;
+  end;
+
   SetLastError(0);
   if hMapFile = 0 then
   begin
@@ -50,7 +63,7 @@ begin
 
     if hMapFile = 0 then
     begin
-      _tprintf('Could not open file mapping object Error: '+ SysErrorMessage(GetLastError));
+      _tprintf({$I %LINE%}+ ': Could not open file mapping object Error: '+ SysErrorMessage(GetLastError));
       Exit;
     end;
     if hMapFile <> 0 then
@@ -65,7 +78,7 @@ begin
 
       if pBuf = nil then
       begin
-        _tprintf('Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
+        _tprintf({$I %LINE%}+ ': Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
         CloseHandle(hMapFile);
         Exit;
       end;
@@ -87,12 +100,91 @@ begin
 
   if pBuf = nil then
   begin
-    _tprintf('Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
+    _tprintf({$I %LINE%}+ ': Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
     CloseHandle(hMapFile);
     Exit;
   end;
 
   StrCopy(pBuf, PChar(s));
+
+  if pBuf <> nil then
+  begin
+    UnmapViewOfFile(pBuf);
+    pBuf:=nil;
+  end;
+  if hMapFile <> 0 then
+  begin
+    CloseHandle(hMapFile);
+    hMapFile := 0;
+  end;
+end;
+
+Function FileMappingActive(MapName: string): boolean;
+var
+  hMapFile_: THandle;
+  pBuf_: PChar;
+begin
+  Result := false;
+
+  hMapFile_:=0;
+  pBuf_:=nil;
+
+  SetLastError(0);
+  if hMapFile_ = 0 then
+  begin
+    if pBuf_ <> nil then
+    begin
+      UnmapViewOfFile(pBuf_);
+      pBuf_:=nil;
+    end;
+
+    hMapFile_ := OpenFileMapping(
+      FILE_MAP_ALL_ACCESS,    // read/write access
+      FALSE,                 // do not inherit the name
+      PAnsiChar(MapName)     // name of mapping object
+    );
+
+    if hMapFile_ = 0 then
+    begin
+      Exit;
+    end;
+    if hMapFile_ <> 0 then
+    begin
+      pBuf_ := PChar(MapViewOfFile(
+        hMapFile_,            // Handle to map object
+        FILE_MAP_ALL_ACCESS, // Read/write permission
+        0,
+        0,
+        MEMORY_SIZE
+      ));
+
+      if pBuf_ = nil then
+      begin
+        CloseHandle(hMapFile_);
+        Exit;
+      end;
+    end;
+  end;
+
+
+  if pBuf_ = nil then
+  begin
+    CloseHandle(hMapFile_);
+    Exit;
+  end;
+
+  if pBuf_ <> nil then
+  begin
+    UnmapViewOfFile(pBuf_);
+    pBuf_:=nil;
+  end;
+  if hMapFile_ <> 0 then
+  begin
+    CloseHandle(hMapFile_);
+    hMapFile_ := 0;
+  end;
+
+  Result := true;
 end;
 
 function RandomString(Size: Integer): String;

@@ -14,8 +14,8 @@ interface
 //);
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, windows,
-  Unit2;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
+  windows, Unit2;
 
 type
 
@@ -24,7 +24,9 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    Label1: TLabel;
     Memo1: TMemo;
+    Shape1: TShape;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -47,7 +49,7 @@ implementation
 procedure TForm1.OnIdle(Sender: TObject; var Done: boolean);
 begin
 
-
+  if FileMappingActive(CMapName) then  Shape1.Brush.Color:=clGreen else Shape1.Brush.Color:=clWhite;
   Done := false;
 end;
 
@@ -61,6 +63,7 @@ begin
   if pBuf <> nil then
   begin
     UnmapViewOfFile(pBuf);
+    pBuf:=nil;
   end;
   if hMapFile <> 0 then
   begin
@@ -87,34 +90,34 @@ inherited Create(TheOwner);
   Application.OnIdle := @OnIdle;
   Application.OnIdleEnd:=@OnIdleEnd;
 
-  SetLastError(0);
-
-  hMapFile := OpenFileMapping(
-    FILE_MAP_ALL_ACCESS,    // read/write access
-    FALSE,                 // do not inherit the name
-    CMapName               // name of mapping object
-  );
-
-  if hMapFile = 0 then
-  begin
-    _tprintf('Could not open file mapping object Error: '+ SysErrorMessage(GetLastError));
-    Exit;
-  end;
-
-  pBuf := PChar(MapViewOfFile(
-    hMapFile,            // Handle to map object
-    FILE_MAP_ALL_ACCESS, // Read/write permission
-    0,
-    0,
-    MEMORY_SIZE
-  ));
-
-  if pBuf = nil then
-  begin
-    _tprintf('Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
-    CloseHandle(hMapFile);
-    Exit;
-  end;
+  //SetLastError(0);
+  //
+  //hMapFile := OpenFileMapping(
+  //  FILE_MAP_ALL_ACCESS,    // read/write access
+  //  FALSE,                 // do not inherit the name
+  //  CMapName               // name of mapping object
+  //);
+  //
+  //if hMapFile = 0 then
+  //begin
+  //  _tprintf({$I %LINE%}+ ': Could not open file mapping object Error: '+ SysErrorMessage(GetLastError));
+  //  Exit;
+  //end;
+  //
+  //pBuf := PChar(MapViewOfFile(
+  //  hMapFile,            // Handle to map object
+  //  FILE_MAP_ALL_ACCESS, // Read/write permission
+  //  0,
+  //  0,
+  //  MEMORY_SIZE
+  //));
+  //
+  //if pBuf = nil then
+  //begin
+  //  _tprintf({$I %LINE%}+ ': Could not map view of file. Error: '+ SysErrorMessage(GetLastError));
+  //  CloseHandle(hMapFile);
+  //  Exit;
+  //end;
 
 
 end;
