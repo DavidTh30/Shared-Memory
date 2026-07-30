@@ -32,6 +32,11 @@ var
   pBuf: PChar;
   hMapFile2: THandle;
   pBuf2: PChar;
+  MutexHandle: THandle;
+  {$IFDEF Windows}
+  var
+   StartUp: StartUpInfoA;
+  {$ENDIF}
 
 implementation
 

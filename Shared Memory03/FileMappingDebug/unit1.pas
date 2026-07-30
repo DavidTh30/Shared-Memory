@@ -80,8 +80,33 @@ end;
 constructor TForm1.Create(TheOwner: TComponent);
 begin
 inherited Create(TheOwner);
+
+  Application.Name:='FileMappingDebug';
+  MutexHandle := CreateMutex(nil, True, PAnsiChar(Application.Name));
+   if (MutexHandle = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
+  begin
+    if MutexHandle <> 0 then begin CloseHandle(MutexHandle); MutexHandle:=0; end;
+    Halt;
+  end;
+
   Memo_:=Memo1;
   Memo__:=Memo2;
+
+  {$IFDEF Windows}
+    GetStartupInfo(StartUp);
+    //_tprintf('Startup.dwFlags: '+Startup.dwFlags.ToString);
+    //if (Startup.dwFlags = $401) then _tprintf('Strart up using GUI app Explorer');
+    //if (Startup.dwFlags = $000) then _tprintf('Strart up using GUI app CMD');
+    //if (Startup.dwFlags = $C01) then _tprintf('Strart up using GUI app Shortcut');
+    //if (Startup.dwFlags = $001) then _tprintf('Strart up using Console app Explorer');
+    //if (Startup.dwFlags = $801)then _tprintf('Strart up using Console app Shortcut');
+  //            GUI app	             GUI app	        GUI app	               Console app          Console app	          Console app
+  //Variable	Explorer	     CMD	        Shortcut	       Explorer	            CMD	                  Shortcut
+  //dwFlags	0x00000401	     0x00000000	        0x00000C01	       0x00000001 	    0x00000000	          0x00000801
+  //wShowWindow	0x0001	             0x0001	        0x0001	               0x0001	            0x0001	          0x0001
+  //hStdOutput	0x0000000000010001   0xFFFFFFFFFFFFFFFF	0x0000000000010001     0xFFFFFFFFFFFFFFFF   0xFFFFFFFFFFFFFFFF	  0xFFFFFFFFFFFFFFFF
+  {$ENDIF}
+
   Application.OnIdle := @OnIdle;
   Application.OnIdleEnd:=@OnIdleEnd;
 
@@ -154,6 +179,7 @@ end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  if MutexHandle <> 0 then begin CloseHandle(MutexHandle); MutexHandle:=0; end;
   if pBuf <> nil then
   begin
     UnmapViewOfFile(pBuf);
@@ -176,6 +202,7 @@ begin
     hMapFile2 := 0;
   end;
 
+  CloseHandle(MutexHandle);
   //_tprintf('Execution completed successfully.');
 
 end;
