@@ -157,6 +157,7 @@ begin
   if pBuf <> nil then
   begin
     UnmapViewOfFile(pBuf);
+    pBuf:=nil
   end;
   if hMapFile <> 0 then
   begin
@@ -167,6 +168,7 @@ begin
   if pBuf2 <> nil then
   begin
     UnmapViewOfFile(pBuf2);
+    pBuf2:=nil
   end;
   if hMapFile2 <> 0 then
   begin
