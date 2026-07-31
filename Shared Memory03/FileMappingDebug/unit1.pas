@@ -53,19 +53,21 @@ begin
 
   if pBuf <> nil then
   begin
-    if String(pBuf) <> '' then
+    if String(pBuf) <> OldString then
     begin
-      _tprintf(String(pBuf));
-      StrCopy(pBuf, '');
+      OldString:=String(pBuf);
+      _tprintf(OldString);
+      //StrCopy(pBuf, '');
     end;
   end;
 
   if pBuf2 <> nil then
   begin
-    if String(pBuf2) <> '' then
+    if String(pBuf2) <> OldString2 then
     begin
-      _tprintf2(String(pBuf2));
-      StrCopy(pBuf2, '');
+      OldString2:=String(pBuf2);
+      _tprintf2(OldString2);
+      //StrCopy(pBuf2, '');
     end;
   end;
 

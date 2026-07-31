@@ -33,6 +33,8 @@ var
   hMapFile2: THandle;
   pBuf2: PChar;
   MutexHandle: THandle;
+  OldString:string;
+  OldString2:string;
   {$IFDEF Windows}
   var
    StartUp: StartUpInfoA;
